@@ -1,0 +1,14 @@
+{
+  "name": "simulador-de-pagos",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm run --parallel dev",
+    "build": "pnpm run --parallel build",
+    "lint": "pnpm run --parallel lint"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "prettier": "^3.1.0",
+    "eslint": "^8"
+  }
+}

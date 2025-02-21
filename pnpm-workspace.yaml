@@ -1,3 +1,0 @@
-packages:
-  - "apps/*"  # Aquí estarán Next.js y NestJS
-  - "packages/*"  # (Opcional) Para librerías compartidas

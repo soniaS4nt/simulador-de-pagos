@@ -1,12 +1,6 @@
 import { Suspense } from 'react'
 import Link from 'next/link'
-
-interface SearchParams {
-  fullName: string
-  lastFourDigits: string
-  amount: number
-  transactionDate: string
-}
+import { SearchParams } from '@simulador/common'
 
 function ReceiptContent({ searchParams }: { searchParams: SearchParams }) {
   const { fullName, lastFourDigits, amount, transactionDate } = searchParams

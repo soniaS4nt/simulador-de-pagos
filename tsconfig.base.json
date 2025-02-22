@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "importHelpers": true,
+        "sourceMap": true,
+        "declaration": false,
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "target": "es2015",
+        "module": "esnext",
+        "lib": [
+            "es2020",
+            "dom"
+        ],
+        "strict": true,
+        "baseUrl": ".",
+        "paths": {
+            "@simulador/base": [
+                "common/src"
+            ]
+        },
+        "rootDir": ".",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

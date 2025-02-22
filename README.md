@@ -1,10 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Simulador de Pagos con Tarjetas
 
-## Getting Started
+¡Bienvenido al Simulador de Pagos con Tarjetas! Este proyecto es una aplicación web que permite simular transacciones de pago utilizando tarjetas, proporcionando una experiencia de usuario interactiva y realista. El frontend está desarrollado con **Next.js** y el backend con **NestJS**.
 
-First, run the development server:
+## Tabla de Contenidos
+
+- [Características](#características)
+- [Tecnologías Utilizadas](#tecnologías-utilizadas)
+- [Instalación](#instalación)
+- [Uso](#uso)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Contribuciones](#contribuciones)
+- [Licencia](#licencia)
+
+## Características
+
+- Simulación de pagos con tarjetas de crédito y débito.
+- Interfaz intuitiva y fácil de usar.
+- Validación de datos de pago.
+- Integración con un backend robusto en NestJS.
+- Despliegue rápido y escalable.
+
+## Tecnologías Utilizadas
+
+- **Frontend**: [Next.js](https://nextjs.org/)
+- **Backend**: [NestJS](https://nestjs.com/)
+- **Base de Datos**: [TypeORM](https://typeorm.io/) (o la que elijas usar)
+- **Estilos**: [Tailwind CSS](https://tailwindcss.com/) (si se utiliza)
+
+## Estructura del Monorepo
+
+Este proyecto está organizado como un **monorepo**, lo que significa que tanto el frontend como el backend se encuentran en la misma estructura de repositorio. Esto facilita la gestión de dependencias y la colaboración entre diferentes partes de la aplicación.
+
+## Instalación
+
+Sigue estos pasos para configurar el proyecto en tu máquina local:
+
+1. Clona el repositorio:
 
 ```bash
+git clone <URL_DEL_REPOSITORIO>
+cd simulador-de-pagos
+
 pnpm run dev
 # or
 yarn dev
@@ -13,24 +49,3 @@ pnpm dev
 # or
 bun dev
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

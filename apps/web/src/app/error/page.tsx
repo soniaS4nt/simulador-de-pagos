@@ -79,12 +79,6 @@ function ErrorContent({ searchParams }: ErrorContentProps) {
         >
           Intentar nuevamente
         </Link>
-        <button
-          onClick={() => (window.location.href = 'https://zippy.cl')}
-          className="border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold py-2 px-4 rounded"
-        >
-          Volver a Zippy
-        </button>
       </div>
     </div>
   )

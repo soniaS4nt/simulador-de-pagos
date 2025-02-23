@@ -20,6 +20,14 @@ function ReceiptContent({ searchParams }: { searchParams: SearchParams }) {
   const formattedDate = formatDate(createdAt)
   return (
     <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
+      {/* Logo Section */}
+      <div className="bg-gradient-to-br from-[#52D4C0] to-[#254F7A] p-6 rounded-lg shadow-lg mb-6">
+        <img
+          src="https://zippy.cl/wp-content/uploads/2024/03/01-logotipo-blanco.svg"
+          alt="logo"
+          className="drop-shadow-lg w-64"
+        />
+      </div>
       <h2 className="text-2xl font-bold mb-6 text-center text-green-600">
         Pago Exitoso
       </h2>
@@ -43,10 +51,10 @@ function ReceiptContent({ searchParams }: { searchParams: SearchParams }) {
         <p className="font-semibold">Fecha de transacción:</p>
         <p>{formattedDate}</p>
       </div>
-      <div className="text-center">
+      <div className="flex flex-col gap-3 mt-6">
         <Link
           href="/"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="bg-gradient-to-br from-[#52D4C0] to-[#254F7A] hover:opacity-90 text-white font-bold py-2 px-4 rounded text-center"
         >
           Volver al inicio
         </Link>

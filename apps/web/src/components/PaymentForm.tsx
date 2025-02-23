@@ -43,24 +43,43 @@ export default function PaymentForm() {
           },
         }
       )
+
       const paymentData = {
         ...data.data,
         createdAt: new Date().toISOString(),
       }
+
       if (data.success) {
         router.push(`/comprobante?${new URLSearchParams(paymentData)}`)
       } else {
-        router.push(`/error?${new URLSearchParams(paymentData)}`)
+        // Recolectar todos los errores
+        const errorMessages = []
+        if (data.errors) errorMessages.push(...data.errors)
+        if (data.message) errorMessages.push(data.message)
+
+        router.push(
+          `/error?${new URLSearchParams({
+            ...paymentData,
+            errors: JSON.stringify(errorMessages),
+          })}`
+        )
       }
     } catch (error) {
       if (error instanceof ZodError) {
-        const newErrors: Partial<Record<keyof PaymentFormData, string>> = {}
-        error.errors.forEach((err) => {
-          if (err.path[0]) {
-            newErrors[err.path[0] as keyof PaymentFormData] = err.message
-          }
-        })
-        setErrors(newErrors)
+        // Recolectar todos los errores de validación
+        const errorMessages = error.errors.map((err) => err.message)
+
+        router.push(
+          `/error?${new URLSearchParams({
+            ...Object.fromEntries(
+              Object.entries(formData).map(([key, value]) => [
+                key,
+                String(value),
+              ])
+            ),
+            errors: JSON.stringify(errorMessages),
+          })}`
+        )
       } else {
         console.error('Error al procesar el pago:', error)
         router.push('/error?message=Error+inesperado+al+procesar+el+pago')
@@ -71,7 +90,7 @@ export default function PaymentForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full max-w-lg border rounded-lg border-gray-300 p-8 "
+      className="bg-white w-full max-w-lg border rounded-lg border-gray-300 p-8 "
     >
       <div className="bg-gradient-to-br from-[#52D4C0] to-[#254F7A] p-6 rounded-lg shadow-lg mb-4">
         <img

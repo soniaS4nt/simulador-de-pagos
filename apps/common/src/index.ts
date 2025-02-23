@@ -10,7 +10,7 @@ export interface PaymentSimulation {
   
 export interface SearchParams {
   fullName: string
-  lastFourDigits: string
+  cardNumber: string
   amount: number
-  transactionDate: string
+  createdAt: string
 }

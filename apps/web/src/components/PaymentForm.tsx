@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { paymentSchema, type PaymentFormData } from '@/lib/schema'
 import { ZodError } from 'zod'
+import axios from 'axios'
 
 export default function PaymentForm() {
   const router = useRouter()
@@ -33,20 +34,23 @@ export default function PaymentForm() {
       const validatedData = paymentSchema.parse(formData)
       setErrors({})
 
-      const response = await fetch('/api/process-payment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(validatedData),
-      })
-
-      const result = await response.json()
-
-      if (response.ok) {
-        router.push(`/comprobante?${new URLSearchParams(result)}`)
+      const { data } = await axios.post(
+        'http://localhost:4000/payments',
+        validatedData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+      const paymentData = {
+        ...data.data,
+        createdAt: new Date().toISOString(),
+      }
+      if (data.success) {
+        router.push(`/comprobante?${new URLSearchParams(paymentData)}`)
       } else {
-        router.push(`/error?${new URLSearchParams(result)}`)
+        router.push(`/error?${new URLSearchParams(paymentData)}`)
       }
     } catch (error) {
       if (error instanceof ZodError) {

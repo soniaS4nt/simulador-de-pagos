@@ -1,10 +1,23 @@
+'use client'
 import { Suspense } from 'react'
 import Link from 'next/link'
 import { SearchParams } from '@simulador/common'
 
-function ReceiptContent({ searchParams }: { searchParams: SearchParams }) {
-  const { fullName, lastFourDigits, amount, transactionDate } = searchParams
+function formatDate(date: Date): string {
+  return date.toLocaleString('es-CL', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'America/Santiago',
+  })
+}
 
+function ReceiptContent({ searchParams }: { searchParams: SearchParams }) {
+  const { fullName, cardNumber, amount, createdAt } = searchParams
+
+  const formattedDate = formatDate(createdAt)
   return (
     <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
       <h2 className="text-2xl font-bold mb-6 text-center text-green-600">
@@ -16,15 +29,19 @@ function ReceiptContent({ searchParams }: { searchParams: SearchParams }) {
       </div>
       <div className="mb-4">
         <p className="font-semibold">Últimos 4 dígitos de la tarjeta:</p>
-        <p>**** **** **** {lastFourDigits}</p>
+        <p>**** **** **** {cardNumber.slice(-4)}</p>
       </div>
       <div className="mb-4">
         <p className="font-semibold">Monto pagado:</p>
-        <p>${amount} CLP</p>
+        <p>
+          $
+          {typeof amount === 'number' ? amount.toLocaleString('es-CL') : amount}{' '}
+          CLP
+        </p>
       </div>
       <div className="mb-6">
         <p className="font-semibold">Fecha de transacción:</p>
-        <p>{new Date(transactionDate).toLocaleString()}</p>
+        <p>{formattedDate}</p>
       </div>
       <div className="text-center">
         <Link

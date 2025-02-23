@@ -6,8 +6,9 @@ export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
   @Post()
-  async createData(@Body() data: any): Promise<void> {
-    await this.paymentService.createPayment(data);
+  async createData(@Body() data: any): Promise<any> {
+    const payment = await this.paymentService.createPayment(data);
+    return { success: true, data: payment };
   }
   
 /*   @Post()

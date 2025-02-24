@@ -19,7 +19,6 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     )
   } catch (error) {
-    console.log(error)
     if (error instanceof ZodError) {
       return NextResponse.json(
         { 
@@ -46,7 +45,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.error('Payment processing error:', error)
     return NextResponse.json(
       { 
         success: false,

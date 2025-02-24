@@ -115,7 +115,6 @@ export default function PaymentForm() {
           )
         }
       } else {
-        console.error('Error al procesar el pago:', error)
         router.push('/error?message=Error+inesperado+al+procesar+el+pago')
       }
     }

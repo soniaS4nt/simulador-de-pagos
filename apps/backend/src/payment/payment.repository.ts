@@ -32,8 +32,8 @@ export class PaymentRepository extends FirebaseBaseRepository<Payment> {
         id: doc.id, 
         ...doc.data() 
       } as Payment;
-    } catch (error: any) {
-      throw new Error(`Error creating payment: ${error.message}`);
+    } catch (error) {
+      throw new Error(`Error creating payment: ${(error as Error).message}`);
     }
   }
   // Métodos específicos para pagos

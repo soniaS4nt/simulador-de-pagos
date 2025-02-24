@@ -4,11 +4,12 @@ Simulador de pagos desarrollado en un monorepo con **Next.js** y el backend con 
 
 ## Tabla de Contenidos
 
-- [Características](#características)
-- [Tecnologías Utilizadas](#tecnologías-utilizadas)
-- [Prerrequisitos](#Prerrequisitos)
-- [Configuración de Firebase](#Configuración)
-- [Instalación](#instalación)
+- [Características](#características-)
+- [Tecnologías Utilizadas](#tecnologías-utilizadas-️)
+- [Estructura del Monorepo](#estructura-del-monorepo-)
+- [Prerrequisitos](#prerrequisitos-)
+- [Configuración de Firebase](#configuración-de-firebase-)
+- [Instalación](#instalación-️)
 
 ## Características 🚀 
 
@@ -23,7 +24,7 @@ Simulador de pagos desarrollado en un monorepo con **Next.js** y el backend con 
 - **Backend**: [NestJS](https://nestjs.com/)
 - **Base de Datos**: [Firestore Database](https://firebase.google.com/) 
 - **Estilos**: [Tailwind CSS](https://tailwindcss.com/) 
-- **Gestión de Paquetes**:[pnpm](https://pnpm.io/)
+- **Gestión de Paquetes**: [pnpm](https://pnpm.io/)
 
 ## Estructura del Monorepo ✨
 

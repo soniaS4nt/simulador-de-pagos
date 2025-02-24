@@ -2,19 +2,10 @@
 'use client'
 import { Suspense } from 'react'
 import Link from 'next/link'
-
-interface ErrorContentProps {
-  searchParams: {
-    message?: string
-    errors?: string
-    fullName?: string
-    cardNumber?: string
-    amount?: string
-  }
-}
+import { ErrorContentProps } from '@simulador/common'
+import { formatCurrency } from '@/lib/utils'
 
 function ErrorContent({ searchParams }: ErrorContentProps) {
-  // Parsear los errores si existen
   const errorMessages = searchParams.errors
     ? JSON.parse(decodeURIComponent(searchParams.errors))
     : []
@@ -67,7 +58,7 @@ function ErrorContent({ searchParams }: ErrorContentProps) {
       {searchParams.amount && (
         <div className="mb-6">
           <p className="font-semibold">Monto:</p>
-          <p>${Number(searchParams.amount).toLocaleString('es-CL')} CLP</p>
+          <p>{formatCurrency(searchParams.amount) + '  CLP'}</p>
         </div>
       )}
 

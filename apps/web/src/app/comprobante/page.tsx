@@ -2,17 +2,7 @@
 import { Suspense } from 'react'
 import Link from 'next/link'
 import { SearchParams } from '@simulador/common'
-
-function formatDate(date: Date): string {
-  return date.toLocaleString('es-CL', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'America/Santiago',
-  })
-}
+import { formatCurrency, formatDate } from '@/lib/utils'
 
 function ReceiptContent({ searchParams }: { searchParams: SearchParams }) {
   const { fullName, cardNumber, amount, createdAt } = searchParams
@@ -28,9 +18,11 @@ function ReceiptContent({ searchParams }: { searchParams: SearchParams }) {
           className="drop-shadow-lg w-64"
         />
       </div>
-      <h2 className="text-2xl font-bold mb-6 text-center text-green-600">
-        Pago Exitoso
-      </h2>
+      <div className="bg-green-100 p-4 rounded-lg mb-6">
+        <h2 className="text-2xl font-bold mb-2 text-center text-green-600">
+          Pago Exitoso
+        </h2>
+      </div>
       <div className="mb-4">
         <p className="font-semibold">Nombre:</p>
         <p>{fullName}</p>
@@ -41,11 +33,7 @@ function ReceiptContent({ searchParams }: { searchParams: SearchParams }) {
       </div>
       <div className="mb-4">
         <p className="font-semibold">Monto pagado:</p>
-        <p>
-          $
-          {typeof amount === 'number' ? amount.toLocaleString('es-CL') : amount}{' '}
-          CLP
-        </p>
+        <p>{formatCurrency(amount) + '  CLP'}</p>
       </div>
       <div className="mb-6">
         <p className="font-semibold">Fecha de transacción:</p>

@@ -16,7 +16,7 @@ export default function PaymentForm() {
     cvv: '',
     amount: 0,
   })
-  const [errors, setErrors] = useState<
+  const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<keyof PaymentFormData, string>>
   >({})
 
@@ -24,7 +24,11 @@ export default function PaymentForm() {
     const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'amount' ? Number.parseFloat(value) : value,
+      [name]: name === 'amount' ? Number.parseFloat(value) || 0 : value,
+    }))
+    setFieldErrors((prev) => ({
+      ...prev,
+      [name]: '',
     }))
   }
 
@@ -32,7 +36,7 @@ export default function PaymentForm() {
     e.preventDefault()
     try {
       const validatedData = paymentSchema.parse(formData)
-      setErrors({})
+      setFieldErrors({})
 
       const { data } = await axios.post(
         'http://localhost:4000/payments',
@@ -52,7 +56,6 @@ export default function PaymentForm() {
       if (data.success) {
         router.push(`/comprobante?${new URLSearchParams(paymentData)}`)
       } else {
-        // Recolectar todos los errores
         const errorMessages = []
         if (data.errors) errorMessages.push(...data.errors)
         if (data.message) errorMessages.push(data.message)
@@ -66,20 +69,56 @@ export default function PaymentForm() {
       }
     } catch (error) {
       if (error instanceof ZodError) {
-        // Recolectar todos los errores de validación
-        const errorMessages = error.errors.map((err) => err.message)
+        const formErrors: Partial<Record<keyof PaymentFormData, string>> = {}
+        const validationErrors: string[] = []
 
-        router.push(
-          `/error?${new URLSearchParams({
-            ...Object.fromEntries(
-              Object.entries(formData).map(([key, value]) => [
-                key,
-                String(value),
-              ])
-            ),
-            errors: JSON.stringify(errorMessages),
-          })}`
-        )
+        error.errors.forEach((err) => {
+          const field = err.path[0] as keyof PaymentFormData
+          const value = formData[field]
+
+          // Si el campo está vacío o es el error de campo requerido, mostrarlo en el formulario
+          if (
+            !value ||
+            value === 0 ||
+            value === '' ||
+            err.message === 'El nombre es requerido' ||
+            err.message === 'Required'
+          ) {
+            formErrors[field] = err.message
+          }
+          // Si el campo tiene contenido pero no cumple con el formato, enviarlo a la página de error
+          else if (value && err.message.includes('debe tener')) {
+            validationErrors.push(err.message)
+          }
+          // Por defecto, mostrar el error en el formulario
+          else {
+            formErrors[field] = err.message
+          }
+        })
+
+        // Siempre mostrar primero los errores en el formulario
+        if (Object.keys(formErrors).length > 0) {
+          setFieldErrors(formErrors)
+          // Si solo hay errores de formulario, no redirigir
+          if (validationErrors.length === 0) {
+            return
+          }
+        }
+
+        // Solo redirigir si hay errores de validación específicos
+        if (validationErrors.length > 0) {
+          router.push(
+            `/error?${new URLSearchParams({
+              ...Object.fromEntries(
+                Object.entries(formData).map(([key, value]) => [
+                  key,
+                  String(value),
+                ])
+              ),
+              errors: JSON.stringify(validationErrors),
+            })}`
+          )
+        }
       } else {
         console.error('Error al procesar el pago:', error)
         router.push('/error?message=Error+inesperado+al+procesar+el+pago')
@@ -90,7 +129,7 @@ export default function PaymentForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white w-full max-w-lg border rounded-lg border-gray-300 p-8 "
+      className="bg-white w-full max-w-lg border rounded-lg border-gray-300 p-8"
     >
       <div className="bg-gradient-to-br from-[#52D4C0] to-[#254F7A] p-6 rounded-lg shadow-lg mb-4">
         <img
@@ -104,7 +143,7 @@ export default function PaymentForm() {
           htmlFor="fullName"
           className="block text-gray-700 text-sm font-bold mb-2"
         >
-          Nombre completo
+          Nombre completo *
         </label>
         <input
           type="text"
@@ -112,10 +151,12 @@ export default function PaymentForm() {
           name="fullName"
           value={formData.fullName}
           onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+            fieldErrors.fullName ? 'border-red-500' : ''
+          }`}
         />
-        {errors.fullName && (
-          <p className="text-red-500 text-xs italic">{errors.fullName}</p>
+        {fieldErrors.fullName && (
+          <p className="text-red-500 text-xs italic">{fieldErrors.fullName}</p>
         )}
       </div>
       <div className="mb-4">
@@ -123,7 +164,7 @@ export default function PaymentForm() {
           htmlFor="cardNumber"
           className="block text-gray-700 text-sm font-bold mb-2"
         >
-          Número de tarjeta
+          Número de tarjeta *
         </label>
         <input
           type="text"
@@ -131,10 +172,14 @@ export default function PaymentForm() {
           name="cardNumber"
           value={formData.cardNumber}
           onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+            fieldErrors.cardNumber ? 'border-red-500' : ''
+          }`}
         />
-        {errors.cardNumber && (
-          <p className="text-red-500 text-xs italic">{errors.cardNumber}</p>
+        {fieldErrors.cardNumber && (
+          <p className="text-red-500 text-xs italic">
+            {fieldErrors.cardNumber}
+          </p>
         )}
       </div>
       <div className="mb-4 flex">
@@ -143,7 +188,7 @@ export default function PaymentForm() {
             htmlFor="expirationDate"
             className="block text-gray-700 text-sm font-bold mb-2"
           >
-            Fecha de expiración
+            Fecha de expiración *
           </label>
           <input
             type="month"
@@ -151,11 +196,13 @@ export default function PaymentForm() {
             name="expirationDate"
             value={formData.expirationDate}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+              fieldErrors.expirationDate ? 'border-red-500' : ''
+            }`}
           />
-          {errors.expirationDate && (
+          {fieldErrors.expirationDate && (
             <p className="text-red-500 text-xs italic">
-              {errors.expirationDate}
+              {fieldErrors.expirationDate}
             </p>
           )}
         </div>
@@ -164,7 +211,7 @@ export default function PaymentForm() {
             htmlFor="cvv"
             className="block text-gray-700 text-sm font-bold mb-2"
           >
-            CVV
+            CVV *
           </label>
           <input
             type="text"
@@ -172,10 +219,12 @@ export default function PaymentForm() {
             name="cvv"
             value={formData.cvv}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+              fieldErrors.cvv ? 'border-red-500' : ''
+            }`}
           />
-          {errors.cvv && (
-            <p className="text-red-500 text-xs italic">{errors.cvv}</p>
+          {fieldErrors.cvv && (
+            <p className="text-red-500 text-xs italic">{fieldErrors.cvv}</p>
           )}
         </div>
       </div>
@@ -184,7 +233,7 @@ export default function PaymentForm() {
           htmlFor="amount"
           className="block text-gray-700 text-sm font-bold mb-2"
         >
-          Monto a pagar (CLP)
+          Monto a pagar (CLP) *
         </label>
         <input
           type="number"
@@ -192,16 +241,19 @@ export default function PaymentForm() {
           name="amount"
           value={formData.amount || ''}
           onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+            fieldErrors.amount ? 'border-red-500' : ''
+          }`}
         />
-        {errors.amount && (
-          <p className="text-red-500 text-xs italic">{errors.amount}</p>
+        {fieldErrors.amount && (
+          <p className="text-red-500 text-xs italic">{fieldErrors.amount}</p>
         )}
       </div>
-      <div className="flex items-center justify-between">
+
+      <div className="flex flex-col gap-3 mt-6">
         <button
           type="submit"
-          className="bg-gradient-to-br from-[#52D4C0] to-[#254F7A] hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          className="bg-gradient-to-br from-[#52D4C0] to-[#254F7A] hover:opacity-90 text-white font-bold py-2 px-4 rounded text-center"
         >
           Pagar
         </button>

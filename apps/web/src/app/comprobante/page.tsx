@@ -3,6 +3,7 @@ import { Suspense } from 'react'
 import Link from 'next/link'
 import { SearchParams } from '@simulador/common'
 import { formatCurrency, formatDate } from '@/lib/utils'
+import Image from 'next/image'
 
 function ReceiptContent({ searchParams }: { searchParams: SearchParams }) {
   const { fullName, cardNumber, amount, createdAt } = searchParams
@@ -12,10 +13,13 @@ function ReceiptContent({ searchParams }: { searchParams: SearchParams }) {
     <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
       {/* Logo Section */}
       <div className="bg-gradient-to-br from-[#52D4C0] to-[#254F7A] p-6 rounded-lg shadow-lg mb-6">
-        <img
+        <Image
           src="https://zippy.cl/wp-content/uploads/2024/03/01-logotipo-blanco.svg"
           alt="logo"
           className="drop-shadow-lg w-64"
+          width={500}
+          height={300}
+          priority
         />
       </div>
       <div className="bg-green-100 p-4 rounded-lg mb-6">

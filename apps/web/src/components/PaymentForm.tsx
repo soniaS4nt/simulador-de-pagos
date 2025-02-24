@@ -5,10 +5,13 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { paymentSchema, type PaymentFormData } from '@/lib/schema'
 import { ZodError } from 'zod'
-import axios from 'axios'
+import Image from 'next/image'
+import { useFormStatus } from 'react-dom'
+import { getAxiosInstance } from '@/lib/axios.instance'
 
 export default function PaymentForm() {
   const router = useRouter()
+  const { pending } = useFormStatus()
   const [formData, setFormData] = useState<PaymentFormData>({
     fullName: '',
     cardNumber: '',
@@ -38,8 +41,8 @@ export default function PaymentForm() {
       const validatedData = paymentSchema.parse(formData)
       setFieldErrors({})
 
-      const { data } = await axios.post(
-        'http://localhost:4000/payments',
+      const { data } = await getAxiosInstance({ baseURL: 'API_NEXT' }).post(
+        '/api/payments',
         validatedData,
         {
           headers: {
@@ -76,7 +79,6 @@ export default function PaymentForm() {
           const field = err.path[0] as keyof PaymentFormData
           const value = formData[field]
 
-          // Si el campo está vacío o es el error de campo requerido, mostrarlo en el formulario
           if (
             !value ||
             value === 0 ||
@@ -85,27 +87,20 @@ export default function PaymentForm() {
             err.message === 'Required'
           ) {
             formErrors[field] = err.message
-          }
-          // Si el campo tiene contenido pero no cumple con el formato, enviarlo a la página de error
-          else if (value && err.message.includes('debe tener')) {
+          } else if (value) {
             validationErrors.push(err.message)
-          }
-          // Por defecto, mostrar el error en el formulario
-          else {
+          } else {
             formErrors[field] = err.message
           }
         })
 
-        // Siempre mostrar primero los errores en el formulario
         if (Object.keys(formErrors).length > 0) {
           setFieldErrors(formErrors)
-          // Si solo hay errores de formulario, no redirigir
           if (validationErrors.length === 0) {
             return
           }
         }
 
-        // Solo redirigir si hay errores de validación específicos
         if (validationErrors.length > 0) {
           router.push(
             `/error?${new URLSearchParams({
@@ -132,10 +127,13 @@ export default function PaymentForm() {
       className="bg-white w-full max-w-lg border rounded-lg border-gray-300 p-8"
     >
       <div className="bg-gradient-to-br from-[#52D4C0] to-[#254F7A] p-6 rounded-lg shadow-lg mb-4">
-        <img
+        <Image
           src="https://zippy.cl/wp-content/uploads/2024/03/01-logotipo-blanco.svg"
           alt="logo"
           className="drop-shadow-lg w-64"
+          width={500}
+          height={300}
+          priority
         />
       </div>
       <div className="mb-4">
@@ -253,6 +251,7 @@ export default function PaymentForm() {
       <div className="flex flex-col gap-3 mt-6">
         <button
           type="submit"
+          disabled={pending}
           className="bg-gradient-to-br from-[#52D4C0] to-[#254F7A] hover:opacity-90 text-white font-bold py-2 px-4 rounded text-center"
         >
           Pagar

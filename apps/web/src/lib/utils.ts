@@ -1,13 +1,13 @@
-export function formatDate(date: Date): string {
-  return date.toLocaleString('es-CL', {
-    day: '2-digit',
-    month: 'long',
+export const formatDate = (date: string | Date) => {
+  const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'America/Santiago',
-  })
-}
+    month: '2-digit',
+    day: '2-digit',
+    timeZone: 'America/Santiago'
+  };
+
+  return new Date(date).toLocaleString("es-CL", options);
+};
 
 export const formatCurrency = (amount: number) => {
   return Number(amount).toLocaleString("es-CL", {

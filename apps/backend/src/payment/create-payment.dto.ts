@@ -12,7 +12,7 @@ export class CreatePaymentDto {
   @IsString()
   @Length(16, 16, { message: 'El número de tarjeta debe tener 16 dígitos' })
   @Matches(/^\d+$/, { message: 'El número de tarjeta solo debe contener números' })
-  @Transform(({ value }) => value.replace(/\s/g, '')) // Elimina espacios
+  @Transform(({ value }) => value.replace(/\s/g, '')) 
   cardNumber: string;
 
   @IsNotEmpty({ message: 'La fecha de expiración es requerida' })

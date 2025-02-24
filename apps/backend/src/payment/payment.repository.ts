@@ -36,7 +36,6 @@ export class PaymentRepository extends FirebaseBaseRepository<Payment> {
       throw new Error(`Error creating payment: ${(error as Error).message}`);
     }
   }
-  // Métodos específicos para pagos
   async findByUserId(userId: string): Promise<Payment[]> {
     return this.find({
       where: [{ field: 'userId', operator: '==', value: userId }],

@@ -80,6 +80,7 @@ pnpm run dev
 
 ✅ Frontend: http://localhost:3000
 🔄 Backend: http://localhost:4000
+📄 Swagger: http://localhost:4000/api
 
 
 

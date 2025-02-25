@@ -79,12 +79,14 @@ export default function PaymentForm() {
             htmlFor="expirationDate"
             className="block text-gray-700 text-sm font-bold mb-2"
           >
-            Fecha de expiración *
+            Fecha de Expiración (MM/YY) *
           </label>
           <input
-            type="month"
+            type="text"
             id="expirationDate"
             name="expirationDate"
+            placeholder="MM/YY"
+            maxLength={5}
             value={formData.expirationDate}
             onChange={handleChange}
             className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${

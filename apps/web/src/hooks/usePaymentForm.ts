@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation'
 import { ZodError } from 'zod'
 import { paymentSchema, type PaymentFormData } from '@/lib/schema'
 import { PAYMENT_FORM_INITIAL_STATE } from '@/lib/utils'
-import { getAxiosInstance } from '@/lib/axios.instance'
+import { getAxiosInstance, isAxiosError} from '@/lib/axios.instance'
 
 type FieldErrors = Partial<Record<keyof PaymentFormData, string>>
 
@@ -71,34 +71,83 @@ export const usePaymentForm = () => {
       const validatedData = paymentSchema.parse(formData)
       setFieldErrors({})
 
-      const { data } = await getAxiosInstance({ baseURL: 'API_NEXT' }).post(
-        '/api/payments',
-        validatedData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-
-      const paymentData = {
-        ...data.data,
-        createdAt: new Date().toISOString(),
-      }
-
-      if (data.success) {
-        router.push(`/comprobante?${new URLSearchParams(paymentData)}`)
-      } else {
-        const errorMessages = []
-        if (data.errors) errorMessages.push(...data.errors)
-        if (data.message) errorMessages.push(data.message)
-
-        router.push(
-          `/error?${new URLSearchParams({
-            ...paymentData,
-            errors: JSON.stringify(errorMessages),
-          })}`
+      const axiosInstance = getAxiosInstance({ baseURL: 'API_NEXT' })
+      
+      try {
+        const { data } = await axiosInstance.post(
+          '/api/payments',
+          validatedData,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
         )
+        
+        const paymentData = {
+          ...data.data,
+          createdAt: new Date().toISOString(),
+        }
+        
+        if (data.success) {
+          router.push(`/comprobante?${new URLSearchParams(paymentData)}`)
+        } else {
+          const errorMessages = []
+          if (data.errors) errorMessages.push(...data.errors)
+          if (data.message) errorMessages.push(data.message)
+
+          router.push(
+            `/error?${new URLSearchParams({
+              ...paymentData,
+              errors: JSON.stringify(errorMessages),
+            })}`
+          )
+        }
+      } catch (axiosError) {
+        
+        if (isAxiosError(axiosError)) {
+      
+          
+          if (axiosError.response) {
+            const { status, data } = axiosError.response
+            
+            if (status === 400) {
+              const serverErrors = data.message || [];
+              const errorMessages = Array.isArray(serverErrors) ? serverErrors : [serverErrors];
+              
+              const newFieldErrors: FieldErrors = {};
+              
+              errorMessages.forEach((errMsg: string) => {
+                if (errMsg.includes('nombre')) newFieldErrors.fullName = errMsg;
+                else if (errMsg.includes('tarjeta')) newFieldErrors.cardNumber = errMsg;
+                else if (errMsg.includes('expiración')) newFieldErrors.expirationDate = errMsg;
+                else if (errMsg.includes('CVV')) newFieldErrors.cvv = errMsg;
+                else if (errMsg.includes('monto')) newFieldErrors.amount = errMsg;
+              });
+              
+              setFieldErrors(newFieldErrors);
+              
+              router.push(
+                `/error?${new URLSearchParams({
+                  ...Object.fromEntries(
+                    Object.entries(formData).map(([key, value]) => [
+                      key,
+                      String(value),
+                    ])
+                  ),
+                  errors: JSON.stringify(errorMessages),
+                  statusCode: String(status)
+                })}`
+              )
+            } else {
+              router.push(`/error?message=Error+del+servidor&statusCode=${status}`)
+            }
+          } else {
+            router.push('/error?message=Error+de+conexión+con+el+servidor')
+          }
+        } else {
+          router.push('/error?message=Error+inesperado+al+procesar+el+pago')
+        }
       }
     } catch (error) {
       if (error instanceof ZodError) {

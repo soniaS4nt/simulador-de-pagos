@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, isAxiosError } from 'axios'
+import axios, { AxiosInstance, isAxiosError,AxiosError } from 'axios'
 
 export interface AxiosConfig {
   baseURL: BaseURL
@@ -30,4 +30,4 @@ const getAxiosInstance = ({ baseURL }: AxiosConfig): AxiosInstance => {
   return axiosInstance
 }
 
-export { getAxiosInstance, isAxiosError }
+export { getAxiosInstance, isAxiosError, AxiosError }

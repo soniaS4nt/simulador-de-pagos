@@ -21,7 +21,7 @@ export const paymentSchema = z.object({
       } catch (e) {
         return false;
       }
-    }, 'La tarjeta ha expirado'),
+    }, 'Fecha de expiración inválida'),
   cvv: z.string().regex(/^\d{3,4}$/, "El CVV debe tener 3 o 4 dígitos"),
   amount: z.number().positive("El monto debe ser positivo").min(1000, "Monto insuficiente"),
 })

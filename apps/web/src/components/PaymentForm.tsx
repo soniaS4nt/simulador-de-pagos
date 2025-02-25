@@ -115,6 +115,7 @@ export default function PaymentForm() {
             type="text"
             id="cvv"
             name="cvv"
+            placeholder="123"
             value={formData.cvv}
             onChange={handleInputChange}
             className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${

@@ -5,7 +5,6 @@ import {
   CollectionReference,
   DocumentData,
   Query,
-  QuerySnapshot,
   DocumentSnapshot,
   WriteResult
 } from 'firebase-admin/firestore';

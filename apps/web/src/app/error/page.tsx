@@ -44,7 +44,7 @@ function ErrorContent({ searchParams }: ErrorContentProps) {
       {searchParams.fullName && (
         <div className="mb-4">
           <p className="font-semibold">Nombre:</p>
-          <p>{searchParams.fullName}</p>
+          <p className="capitalize">{searchParams.fullName}</p>
         </div>
       )}
 

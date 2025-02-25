@@ -29,7 +29,7 @@ function ReceiptContent({ searchParams }: { searchParams: SearchParams }) {
       </div>
       <div className="mb-4">
         <p className="font-semibold">Nombre:</p>
-        <p>{fullName}</p>
+        <p className="capitalize">{fullName}</p>
       </div>
       <div className="mb-4">
         <p className="font-semibold">Últimos 4 dígitos de la tarjeta:</p>

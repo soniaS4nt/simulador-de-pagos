@@ -7,9 +7,8 @@ export const paymentSchema = z.object({
   .regex(/^\d{4}-\d{2}$/, "La fecha de expiración debe tener el formato YYYY-MM")
   .refine((date) => {
     const [year, month] = date.split('-').map(Number)
-    const expirationDate = new Date(year, month - 1) // month - 1 porque en JS los meses van de 0-11
+    const expirationDate = new Date(year, month - 1) 
     const today = new Date()
-    // Establecer el día al primer día del mes para comparar solo mes y año
     today.setDate(1)
     today.setHours(0, 0, 0, 0)
     expirationDate.setDate(1)

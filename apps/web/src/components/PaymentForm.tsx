@@ -1,124 +1,18 @@
 'use client'
 
-import type React from 'react'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { paymentSchema, type PaymentFormData } from '@/lib/schema'
-import { ZodError } from 'zod'
+import React from 'react'
 import Image from 'next/image'
-import { useFormStatus } from 'react-dom'
-import { getAxiosInstance } from '@/lib/axios.instance'
+import { usePaymentForm } from '@/hooks/usePaymentForm'
 
 export default function PaymentForm() {
-  const router = useRouter()
-  const { pending } = useFormStatus()
-  const [formData, setFormData] = useState<PaymentFormData>({
-    fullName: '',
-    cardNumber: '',
-    expirationDate: '',
-    cvv: '',
-    amount: 0,
-  })
-  const [fieldErrors, setFieldErrors] = useState<
-    Partial<Record<keyof PaymentFormData, string>>
-  >({})
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === 'amount' ? Number.parseFloat(value) || 0 : value,
-    }))
-    setFieldErrors((prev) => ({
-      ...prev,
-      [name]: '',
-    }))
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    try {
-      const validatedData = paymentSchema.parse(formData)
-      setFieldErrors({})
-
-      const { data } = await getAxiosInstance({ baseURL: 'API_NEXT' }).post(
-        '/api/payments',
-        validatedData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-
-      const paymentData = {
-        ...data.data,
-        createdAt: new Date().toISOString(),
-      }
-
-      if (data.success) {
-        router.push(`/comprobante?${new URLSearchParams(paymentData)}`)
-      } else {
-        const errorMessages = []
-        if (data.errors) errorMessages.push(...data.errors)
-        if (data.message) errorMessages.push(data.message)
-
-        router.push(
-          `/error?${new URLSearchParams({
-            ...paymentData,
-            errors: JSON.stringify(errorMessages),
-          })}`
-        )
-      }
-    } catch (error) {
-      if (error instanceof ZodError) {
-        const formErrors: Partial<Record<keyof PaymentFormData, string>> = {}
-        const validationErrors: string[] = []
-
-        error.errors.forEach((err) => {
-          const field = err.path[0] as keyof PaymentFormData
-          const value = formData[field]
-
-          if (
-            !value ||
-            value === 0 ||
-            value === '' ||
-            err.message === 'El nombre es requerido' ||
-            err.message === 'Required'
-          ) {
-            formErrors[field] = err.message
-          } else if (value) {
-            validationErrors.push(err.message)
-          } else {
-            formErrors[field] = err.message
-          }
-        })
-
-        if (Object.keys(formErrors).length > 0) {
-          setFieldErrors(formErrors)
-          if (validationErrors.length === 0) {
-            return
-          }
-        }
-
-        if (validationErrors.length > 0) {
-          router.push(
-            `/error?${new URLSearchParams({
-              ...Object.fromEntries(
-                Object.entries(formData).map(([key, value]) => [
-                  key,
-                  String(value),
-                ])
-              ),
-              errors: JSON.stringify(validationErrors),
-            })}`
-          )
-        }
-      } else {
-        router.push('/error?message=Error+inesperado+al+procesar+el+pago')
-      }
-    }
-  }
+  const {
+    formData,
+    fieldErrors,
+    isSubmitting,
+    areAllFieldsFilled,
+    handleChange,
+    handleSubmit,
+  } = usePaymentForm()
 
   return (
     <form
@@ -238,6 +132,8 @@ export default function PaymentForm() {
           name="amount"
           value={formData.amount || ''}
           onChange={handleChange}
+          min="1"
+          step="1"
           className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
             fieldErrors.amount ? 'border-red-500' : ''
           }`}
@@ -250,11 +146,20 @@ export default function PaymentForm() {
       <div className="flex flex-col gap-3 mt-6">
         <button
           type="submit"
-          disabled={pending}
-          className="bg-gradient-to-br from-[#52D4C0] to-[#254F7A] hover:opacity-90 text-white font-bold py-2 px-4 rounded text-center"
+          disabled={isSubmitting || !areAllFieldsFilled}
+          className={`font-bold py-2 px-4 rounded text-center ${
+            areAllFieldsFilled && !isSubmitting
+              ? 'bg-gradient-to-br from-[#52D4C0] to-[#254F7A] hover:opacity-90 text-white'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          }`}
         >
-          Pagar
+          {isSubmitting ? 'Procesando...' : 'Pagar'}
         </button>
+        {!areAllFieldsFilled && (
+          <p className="text-red-500 text-xs text-center">
+            Debes completar todos los campos requeridos *
+          </p>
+        )}
       </div>
     </form>
   )

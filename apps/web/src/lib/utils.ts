@@ -1,3 +1,5 @@
+import { type PaymentFormData } from './schema'
+
 export const formatDate = (date: string | Date) => {
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
@@ -17,3 +19,12 @@ export const formatCurrency = (amount: number) => {
     maximumFractionDigits: 0,
   });
 };
+
+
+export const PAYMENT_FORM_INITIAL_STATE: PaymentFormData = {
+  fullName: '',
+  cardNumber: '',
+  expirationDate: '',
+  cvv: '',
+  amount: 0,
+}

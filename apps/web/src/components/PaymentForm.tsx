@@ -78,8 +78,8 @@ export default function PaymentForm() {
           </p>
         )}
       </div>
-      <div className="mb-4 flex">
-        <div className="w-9/12 pr-2">
+      <div className="flex flex-col md:flex-row md:gap-4 mb-4 ">
+        <div className=" md:w-1/2 w-full mb-4 sm:mb-0">
           <label
             htmlFor="expirationDate"
             className="block text-gray-700 text-sm font-bold mb-2"
@@ -104,7 +104,7 @@ export default function PaymentForm() {
             </p>
           )}
         </div>
-        <div className="w-1/4 pl-2">
+        <div className="md:w-1/2 w-full">
           <label
             htmlFor="cvv"
             className="block text-gray-700 text-sm font-bold mb-2"

@@ -1,10 +1,11 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import { usePaymentForm } from '@/hooks/usePaymentForm'
 
 export default function PaymentForm() {
+  const [hasInteracted, setHasInteracted] = useState(false)
   const {
     formData,
     fieldErrors,
@@ -14,6 +15,10 @@ export default function PaymentForm() {
     handleSubmit,
   } = usePaymentForm()
 
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setHasInteracted(true)
+    handleChange(event)
+  }
   return (
     <form
       onSubmit={handleSubmit}
@@ -41,7 +46,7 @@ export default function PaymentForm() {
           id="fullName"
           name="fullName"
           value={formData.fullName}
-          onChange={handleChange}
+          onChange={handleInputChange}
           className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
             fieldErrors.fullName ? 'border-red-500' : ''
           }`}
@@ -62,7 +67,7 @@ export default function PaymentForm() {
           id="cardNumber"
           name="cardNumber"
           value={formData.cardNumber}
-          onChange={handleChange}
+          onChange={handleInputChange}
           className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
             fieldErrors.cardNumber ? 'border-red-500' : ''
           }`}
@@ -88,7 +93,7 @@ export default function PaymentForm() {
             placeholder="MM/YY"
             maxLength={5}
             value={formData.expirationDate}
-            onChange={handleChange}
+            onChange={handleInputChange}
             className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
               fieldErrors.expirationDate ? 'border-red-500' : ''
             }`}
@@ -111,7 +116,7 @@ export default function PaymentForm() {
             id="cvv"
             name="cvv"
             value={formData.cvv}
-            onChange={handleChange}
+            onChange={handleInputChange}
             className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
               fieldErrors.cvv ? 'border-red-500' : ''
             }`}
@@ -133,7 +138,7 @@ export default function PaymentForm() {
           id="amount"
           name="amount"
           value={formData.amount || ''}
-          onChange={handleChange}
+          onChange={handleInputChange}
           min="1"
           step="1"
           className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
@@ -157,7 +162,7 @@ export default function PaymentForm() {
         >
           {isSubmitting ? 'Procesando...' : 'Pagar'}
         </button>
-        {!areAllFieldsFilled && (
+        {!areAllFieldsFilled && hasInteracted && (
           <p className="text-red-500 text-xs text-center">
             Debes completar todos los campos requeridos *
           </p>

@@ -13,7 +13,6 @@ function ErrorContent({ searchParams }: ErrorContentProps) {
 
   return (
     <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
-      {/* Logo Section */}
       <div className="bg-gradient-to-br from-[#52D4C0] to-[#254F7A] p-6 rounded-lg shadow-lg mb-6">
         <Image
           src="https://zippy.cl/wp-content/uploads/2024/03/01-logotipo-blanco.svg"
@@ -25,13 +24,11 @@ function ErrorContent({ searchParams }: ErrorContentProps) {
         />
       </div>
 
-      {/* Error Messages */}
-      <div className="text-center mb-6">
+      <div className="text-justify mb-6">
         <div className="bg-red-100 p-4 rounded-lg mb-6">
-          <h2 className="text-2xl font-bold mb-2 text-red-600">
+          <h2 className="text-2xl text-center font-bold mb-2 text-red-600">
             Error en el Pago
           </h2>
-          {/* Mostrar mensaje simple o lista de errores */}
           {searchParams.message ? (
             <p className="text-red-700">{searchParams.message}</p>
           ) : (
@@ -44,7 +41,6 @@ function ErrorContent({ searchParams }: ErrorContentProps) {
         </div>
       </div>
 
-      {/* Transaction Details (si existen) */}
       {searchParams.fullName && (
         <div className="mb-4">
           <p className="font-semibold">Nombre:</p>
@@ -66,7 +62,6 @@ function ErrorContent({ searchParams }: ErrorContentProps) {
         </div>
       )}
 
-      {/* Action Buttons */}
       <div className="flex flex-col gap-3 mt-6">
         <Link
           href="/"
